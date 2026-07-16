@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  :root { --accent:#F5B82E; --accent-strong:#C8971F; --bg:#F3EFE6; --card:#FFFFFF; --radius:22px; --pill:999px; --font-display:'Space Grotesk', sans-serif; --card-line:1px solid rgba(20,20,20,0.16); --card-shadow:none; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: 'Manrope', system-ui, sans-serif; color: #141414; background: var(--bg); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  a { color: #141414; text-decoration: none; }
+  a:hover { color: var(--accent-strong); }
+  ::selection { background: var(--accent); color: #141414; }
+  .te-word { display: inline-block; opacity: 0; filter: blur(10px); transform: translateY(14px); transition: opacity .6s cubic-bezier(.21,.47,.32,.98), filter .6s cubic-bezier(.21,.47,.32,.98), transform .6s cubic-bezier(.21,.47,.32,.98); transition-delay: calc(var(--i, 0) * 45ms); }
+  .te-visible .te-word { opacity: 1; filter: blur(0); transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .te-word { transition: none; opacity: 1; filter: none; transform: none; } }
+  .dc-meteor { position: absolute; top: -40px; left: 0; height: 2px; width: 2px; border-radius: 9999px; background: #000000; box-shadow: 0 0 0 1px rgba(255,255,255,0.35), 0 0 6px rgba(255,255,255,0.15); transform: rotate(215deg); animation-name: dc-meteor; animation-timing-function: linear; animation-iteration-count: infinite; pointer-events: none; z-index: 0; }
+  .dc-meteor::before { content: ''; position: absolute; top: 50%; width: 50px; height: 1px; transform: translateY(-50%); background: linear-gradient(to right, #000000, transparent); box-shadow: 0 0 4px rgba(255,255,255,0.1); }
+  @keyframes dc-meteor { 0% { transform: rotate(215deg) translateX(0); opacity: 1; } 70% { opacity: 1; } 100% { transform: rotate(215deg) translateX(-500px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .dc-meteor { display: none; } }
+  .dc-pulse-dot { position: relative; }
+  .dc-pulse-dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: inherit; animation: dc-pulse 1.6s ease-out infinite; }
+  @keyframes dc-pulse { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(2.6); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .dc-pulse-dot::after { display: none; } }
+  .dc-logo-track { display: flex; align-items: center; gap: 64px; width: max-content; animation: dc-logo-scroll 28s linear infinite; }
+  .dc-logo-marquee:hover .dc-logo-track { animation-play-state: paused; }
+  @keyframes dc-logo-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .dc-logo-track { animation: none; } }
+</style>
+</helmet>
+<div style="max-width:100%;overflow-x:hidden;">
+
+  <!-- ===================== NAV ===================== -->
+  <header style="position:sticky;top:0;z-index:50;background:rgba(243,239,230,0.82);backdrop-filter:blur(14px);border-bottom:1px solid rgba(20,20,20,0.08);">
+    <nav style="max-width:1240px;margin:0 auto;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
+      <div style="display:flex;align-items:center;gap:18px;">
+        <a onClick="{{ goHome }}" style="display:flex;align-items:center;gap:9px;cursor:pointer;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:#141414;color:var(--accent);border-radius:9px;font-family:var(--font-display);font-weight:700;font-size:17px;">Y</span>
+          <span style="font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-0.02em;">Yoan Duclaux<span style="color:var(--accent);">.</span></span>
+        </a>
+        <span style="display:inline-flex;align-items:center;gap:8px;background:rgba(20,20,20,0.06);border-radius:var(--pill);padding:6px 14px;">
+          <span class="dc-pulse-dot" style="width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;"></span>
+          <span style="font-weight:700;font-size:13.5px;color:#141414;">Open to work</span>
+        </span>
+      </div>
+      <div style="display:flex;align-items:center;gap:28px;">
+        <a onClick="{{ goHome }}" style="cursor:pointer;font-weight:600;font-size:15px;">Accueil</a>
+        <a onClick="{{ goProjects }}" style="cursor:pointer;font-weight:600;font-size:15px;">Projets</a>
+        <a onClick="{{ goContact }}" style="cursor:pointer;font-weight:600;font-size:15px;">Contact</a>
+        <a onClick="{{ goContact }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#141414;font-weight:700;font-size:14px;padding:11px 20px;border-radius:var(--pill);" style-hover="background:#141414;color:var(--accent);">Contact ↗</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ===================== HOME ===================== -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <main>
+    <!-- HERO -->
+    <section class="meteor-field" style="position:relative;overflow:hidden;max-width:1240px;margin:32px auto 0;padding:88px 32px 56px;text-align:center;background:transparent;color:#141414;border-radius:var(--radius);border:1px solid transparent;">
+      <div style="position:relative;z-index:1;display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#5A564C;margin-bottom:26px;">
+        <span style="width:7px;height:7px;background:var(--accent);border-radius:50%;display:inline-block;"></span>
+        Consultant SEO &amp; SEA · En recherche d'alternance
+      </div>
+      <h1 class="te-reveal" style="position:relative;z-index:1;font-family:var(--font-display);font-weight:700;font-size:clamp(38px,6.2vw,80px);line-height:1.02;letter-spacing:-0.03em;margin:0 auto;max-width:15ch;">
+        Portfolio <span style="display:inline-block;background:var(--accent);color:#141414;padding:0 14px;border-radius:14px;transform:rotate(-1deg);">Yoan Duclaux</span>
+      </h1>
+      <p style="position:relative;z-index:1;max-width:62ch;margin:28px auto 0;font-size:18px;line-height:1.6;color:#5A564C;">
+        23 ans, consultant SEO &amp; SEA. En recherche d'une alternance en marketing digital orientée référencement, au sein d'un annonceur. Découvrez mon parcours, mes compétences et mes projets.
+      </p>
+      <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:36px;">
+        <a onClick="{{ goProjects }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:9px;background:var(--accent);color:#141414;font-weight:700;font-size:15px;padding:15px 26px;border-radius:var(--pill);" style-hover="background:#141414;color:var(--accent);">Voir les projets →</a>
+        <a onClick="{{ goContact }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:9px;background:transparent;color:#141414;font-weight:700;font-size:15px;padding:15px 26px;border-radius:var(--pill);border:1.5px solid rgba(20,20,20,0.16);" style-hover="border-color:#141414;">Contactez-moi ↗</a>
+      </div>
+      <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:36px;justify-content:center;margin-top:56px;padding-top:34px;border-top:1px solid rgba(20,20,20,0.1);max-width:720px;margin-left:auto;margin-right:auto;">
+        <div><div style="font-family:var(--font-display);font-weight:700;font-size:32px;color:#141414;">23</div><div style="font-size:13px;color:#5A564C;font-weight:600;">Projets clients</div></div>
+        <div><div style="font-family:var(--font-display);font-weight:700;font-size:32px;color:#141414;">4</div><div style="font-size:13px;color:#5A564C;font-weight:600;">Agences &amp; freelance</div></div>
+        <div><div style="font-family:var(--font-display);font-weight:700;font-size:32px;color:#141414;">SEO · Ads</div><div style="font-size:13px;color:#5A564C;font-weight:600;">Search &amp; paid media</div></div>
+      </div>
+    </section>
+
+    <!-- ABOUT / STRATEGY -->
+    <section style="max-width:1240px;margin:0 auto;padding:40px 32px;">
+      <div style="display:grid;grid-template-columns:1.05fr 0.95fr;gap:20px;align-items:stretch;">
+        <div class="meteor-field" style="position:relative;overflow:hidden;background:#141414;color:var(--bg);border-radius:var(--radius);padding:44px;display:flex;flex-direction:column;">
+          <div style="position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:24px;">
+            <span style="width:6px;height:6px;background:var(--accent);border-radius:50%;"></span> À propos du consultant
+          </div>
+          <h2 class="te-reveal" style="position:relative;z-index:1;font-family:var(--font-display);font-weight:700;font-size:clamp(30px,3.6vw,46px);line-height:1.04;letter-spacing:-0.02em;margin:0;">La stratégie d'abord.<br><span style="color:#8A8578;">Toujours.</span></h2>
+          <p style="position:relative;z-index:1;font-size:16px;line-height:1.65;color:#B8B4AB;margin:22px 0 0;max-width:44ch;">
+            À 23 ans, je pilote des stratégies SEO et paid media pour des marques accompagnées via les agences La Jungle, Myniweb, Digimood, et en freelance. Contenu, technique, données structurées, campagnes payantes : je construis des systèmes de croissance durables, pas des coups ponctuels.
+          </p>
+          <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:12px;margin-top:28px;">
+            <a onClick="{{ goProjects }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#141414;font-weight:700;font-size:14px;padding:12px 20px;border-radius:var(--pill);">Voir mes projets ↘</a>
+            <a onClick="{{ goContact }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--bg);font-weight:700;font-size:14px;padding:12px 20px;border-radius:var(--pill);border:1.5px solid rgba(243,239,230,0.25);">Me contacter ↘</a>
+          </div>
+          <div style="position:relative;z-index:1;margin-top:auto;padding-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div style="background:#1E1E1E;border-radius:16px;padding:18px;">
+              <div style="font-family:var(--font-display);font-weight:700;font-size:26px;color:var(--accent);">SEO</div>
+              <div style="font-size:12.5px;color:#B8B4AB;margin-top:2px;">Technique · contenu · netlinking</div>
+            </div>
+            <div style="background:#1E1E1E;border-radius:16px;padding:18px;">
+              <div style="font-family:var(--font-display);font-weight:700;font-size:26px;color:var(--accent);">Paid</div>
+              <div style="font-size:12.5px;color:#B8B4AB;margin-top:2px;">Google Ads · Meta Ads</div>
+            </div>
+          </div>
+        </div>
+        <div style="position:relative;border-radius:var(--radius);overflow:hidden;min-height:460px;background:#E4DFD2;">
+          <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="yoan-portrait" shape="rect" fit="cover" placeholder="Déposez votre photo (portrait)" hint-size="100%,100%" src="./logos/yoan-portrait.jpeg"></x-import>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLIENTS STRIP -->
+    <section style="max-width:1240px;margin:0 auto;padding:34px 32px;">
+      <div style="text-align:center;font-size:12.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8A8578;margin-bottom:24px;">Ils m'ont fait confiance</div>
+      <div class="dc-logo-marquee" style="overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent);">
+        <div class="dc-logo-track" style="animation-direction:reverse;">
+          <sc-for list="{{ clientLogos }}" as="cl3" hint-placeholder-count="6">
+            <img src="{{ cl3.src }}" alt="{{ cl3.name }}" title="{{ cl3.name }}" style="height:38px;width:auto;object-fit:contain;filter:grayscale(1);opacity:0.55;flex:none;" />
+          </sc-for>
+          <sc-for list="{{ clientLogos }}" as="cl4" hint-placeholder-count="6">
+            <img src="{{ cl4.src }}" alt="{{ cl4.name }}" title="{{ cl4.name }}" style="height:38px;width:auto;object-fit:contain;filter:grayscale(1);opacity:0.55;flex:none;" aria-hidden="true" />
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERTISES -->
+    <section style="max-width:1240px;margin:0 auto;padding:64px 32px 40px;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:36px;">
+        <div>
+          <div style="font-size:12.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8A8578;margin-bottom:14px;">Compétences</div>
+          <h2 class="te-reveal" style="font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4vw,52px);line-height:1.03;letter-spacing:-0.025em;margin:0;max-width:16ch;">Mes <span style="color:#8A8578;">outils</span></h2>
+        </div>
+        <p style="max-width:34ch;font-size:15.5px;line-height:1.6;color:#5A564C;margin:0;">Du référencement naturel à la publicité payante, je maîtrise l'ensemble de la chaîne d'acquisition et les outils qui la pilotent.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:26px;">
+        <sc-for list="{{ toolLogos }}" as="tl" hint-placeholder-count="5">
+          <span title="{{ tl.name }}" style="display:inline-flex;align-items:center;justify-content:center;height:56px;padding:10px 22px;background:var(--card);border:1px solid rgba(20,20,20,0.12);border-radius:var(--pill);">
+            <img src="{{ tl.src }}" alt="{{ tl.name }}" style="height:100%;width:auto;object-fit:contain;" />
+          </span>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- PARCOURS -->
+    <section style="max-width:1240px;margin:0 auto;padding:56px 32px 24px;">
+      <div style="display:flex;flex-direction:column;gap:32px;">
+        <div>
+          <div style="font-size:12.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8A8578;margin-bottom:14px;">Parcours</div>
+          <h2 class="te-reveal" style="font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4vw,52px);line-height:1.03;letter-spacing:-0.025em;margin:0;max-width:14ch;">Mes <span style="color:#8A8578;">expériences</span></h2>
+          <p style="max-width:34ch;font-size:15.5px;line-height:1.6;color:#5A564C;margin:20px 0 0;">Agences, freelance et entrepreneuriat : un parcours orienté acquisition de trafic et référencement.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <sc-for list="{{ experiences }}" as="e" hint-placeholder-count="6">
+            <div style="background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:18px;overflow:hidden;">
+              <div onClick="{{ e.toggle }}" style="cursor:pointer;display:flex;align-items:center;gap:16px;padding:18px 22px;">
+                <sc-if value="{{ e.logo }}">
+                  <span style="width:46px;height:46px;border-radius:12px;background:var(--bg);border:1px solid rgba(20,20,20,0.1);display:flex;align-items:center;justify-content:center;flex:none;padding:6px;">
+                    <img src="{{ e.logo }}" alt="{{ e.org }}" style="width:100%;height:100%;object-fit:contain;" />
+                  </span>
+                </sc-if>
+                <sc-if value="{{ !e.logo }}">
+                  <span style="width:46px;height:46px;border-radius:12px;background:#141414;color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none;font-family:var(--font-display);font-weight:700;font-size:17px;">{{ e.org.charAt(0) }}</span>
+                </sc-if>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-family:'Space Grotesk',monospace;font-size:12px;font-weight:600;color:var(--accent-strong);letter-spacing:0.02em;">{{ e.period }}</div>
+                  <h3 style="font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-0.01em;margin:4px 0 0;">{{ e.role }}</h3>
+                  <div style="font-size:13.5px;font-weight:600;color:#5A564C;">{{ e.org }}</div>
+                </div>
+                <sc-if value="{{ e.isOpen }}">
+                  <span style="font-size:22px;color:#8A8578;font-weight:300;flex:none;">−</span>
+                </sc-if>
+                <sc-if value="{{ !e.isOpen }}">
+                  <span style="font-size:22px;color:#8A8578;font-weight:300;flex:none;">+</span>
+                </sc-if>
+              </div>
+              <sc-if value="{{ e.isOpen }}">
+                <div style="padding:0 22px 22px 84px;">
+                  <p style="font-size:14px;line-height:1.55;color:#6E6A60;margin:0;">{{ e.desc }}</p>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section style="max-width:1240px;margin:0 auto;padding:56px 32px;">
+      <div class="meteor-field" style="position:relative;overflow:hidden;background:#141414;border-radius:var(--radius);padding:48px 44px;color:var(--bg);">
+        <div style="position:relative;z-index:1;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:38px;">
+          <h2 class="te-reveal" style="font-family:var(--font-display);font-weight:700;font-size:clamp(28px,3.6vw,44px);letter-spacing:-0.02em;margin:0;">Mon éducation</h2>
+          <span style="font-size:14px;color:#8A8578;font-weight:600;">Un parcours en communication et marketing digital.</span>
+        </div>
+        <div style="position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;">
+          <sc-for list="{{ education }}" as="ed" hint-placeholder-count="4">
+            <div style="border-top:2px solid var(--accent);padding-top:20px;">
+              <div style="font-family:'Space Grotesk',monospace;font-weight:600;font-size:13px;color:var(--accent);letter-spacing:0.02em;">{{ ed.period }}</div>
+              <h3 style="font-family:var(--font-display);font-weight:700;font-size:19px;margin:14px 0 4px;line-height:1.2;">{{ ed.title }}</h3>
+              <div style="font-size:13.5px;font-weight:600;color:#B8B4AB;">{{ ed.org }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:34px;padding-top:26px;border-top:1px solid #2A2A2A;">
+          <span style="font-size:12px;font-weight:700;color:#8A8578;text-transform:uppercase;letter-spacing:0.1em;">Langues</span>
+          <span style="font-weight:600;font-size:13.5px;color:var(--bg);background:#1E1E1E;border:1px solid #2E2E2E;padding:8px 14px;border-radius:var(--pill);">Français</span>
+          <span style="font-weight:600;font-size:13.5px;color:var(--bg);background:#1E1E1E;border:1px solid #2E2E2E;padding:8px 14px;border-radius:var(--pill);">Anglais</span>
+          <span style="font-weight:600;font-size:13.5px;color:var(--bg);background:#1E1E1E;border:1px solid #2E2E2E;padding:8px 14px;border-radius:var(--pill);">Espagnol</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED PROJECTS -->
+    <section style="max-width:1240px;margin:0 auto;padding:40px 32px 72px;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:32px;">
+        <div>
+          <div style="font-size:12.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8A8578;margin-bottom:14px;">Sélection de projets</div>
+          <h2 class="te-reveal" style="font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4vw,52px);letter-spacing:-0.025em;margin:0;">Des projets concrets</h2>
+        </div>
+        <a onClick="{{ goProjects }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;border:1.5px solid rgba(20,20,20,0.2);padding:12px 22px;border-radius:var(--pill);" style-hover="border-color:#141414;background:#141414;color:var(--bg);">Tous les projets →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
+        <sc-for list="{{ featured }}" as="p" hint-placeholder-count="6">
+          <div onClick="{{ p.open }}" style="cursor:pointer;background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;" style-hover="border-color:#141414;">
+            <div style="height:88px;background-image:repeating-linear-gradient(135deg,#EEE9DC 0 12px,#E7E1D2 12px 24px);display:flex;align-items:flex-end;justify-content:space-between;padding:16px;">
+              <span style="font-family:var(--font-display);font-weight:700;font-size:13px;background:#141414;color:var(--accent);padding:6px 12px;border-radius:var(--pill);">{{ p.typeLabel }}</span>
+              <span style="font-family:'Space Grotesk',monospace;font-size:12px;color:#A39D8C;">{{ p.agence }}</span>
+            </div>
+            <div style="padding:22px;display:flex;flex-direction:column;flex:1;">
+              <h3 style="font-family:var(--font-display);font-weight:700;font-size:20px;letter-spacing:-0.01em;margin:0;">{{ p.name }}</h3>
+              <p style="font-size:13.5px;line-height:1.55;color:#6E6A60;margin:9px 0 16px;flex:1;">{{ p.desc }}</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;">
+                <sc-for list="{{ p.tags }}" as="t" hint-placeholder-count="3">
+                  <span style="font-size:11.5px;font-weight:600;color:#5A564C;background:var(--bg);padding:5px 10px;border-radius:8px;">{{ t }}</span>
+                </sc-for>
+              </div>
+              <span style="font-weight:700;font-size:14px;color:#141414;">Voir le projet →</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="max-width:1240px;margin:0 auto;padding:0 32px 88px;">
+      <div style="background:var(--accent);border-radius:var(--radius);padding:64px 44px;text-align:center;">
+        <h2 class="te-reveal" style="font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4.4vw,56px);letter-spacing:-0.03em;margin:0 auto;max-width:18ch;line-height:1.03;">Mon profil vous intéresse ? Parlons-en.</h2>
+        <p style="font-size:17px;color:#3A3730;max-width:52ch;margin:20px auto 0;line-height:1.55;">Actuellement à la recherche d'une alternance en SEO / SEA : discutons de votre besoin et de mon profil.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:34px;">
+          <a onClick="{{ goContact }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:9px;background:#141414;color:var(--bg);font-weight:700;font-size:15px;padding:15px 28px;border-radius:var(--pill);">Me contacter →</a>
+          <a href="mailto:Yoan.tavel@gmail.com" style="display:inline-flex;align-items:center;gap:9px;background:rgba(20,20,20,0.08);color:#141414;font-weight:700;font-size:15px;padding:15px 28px;border-radius:var(--pill);">Yoan.tavel@gmail.com</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <!-- ===================== PROJECTS LIST ===================== -->
+  <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ true }}">
+  <main>
+    <section style="max-width:1240px;margin:0 auto;padding:72px 32px 24px;">
+      <div style="font-size:12.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8A8578;margin-bottom:16px;">Portfolio</div>
+      <h1 class="te-reveal" style="font-family:var(--font-display);font-weight:700;font-size:clamp(38px,6vw,74px);line-height:1.0;letter-spacing:-0.03em;margin:0;max-width:16ch;">Mes projets SEO, Ads &amp; stratégie digitale</h1>
+      <p style="max-width:58ch;margin:22px 0 0;font-size:17px;line-height:1.6;color:#5A564C;">Une sélection de missions menées en SEO, Google Ads et Meta Ads, pour différents clients et agences. Filtrez par type ou par contexte.</p>
+    </section>
+
+    <!-- FILTERS -->
+    <section style="max-width:1240px;margin:0 auto;padding:20px 32px;">
+      <div style="margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:700;color:#8A8578;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.1em;">Type de projet</div>
+        <div style="display:flex;flex-wrap:wrap;gap:9px;">
+          <sc-for list="{{ typeFilters }}" as="f" hint-placeholder-count="5">
+            <a onClick="{{ f.apply }}" style="cursor:pointer;font-weight:700;font-size:14px;padding:9px 18px;border-radius:var(--pill);border:1.5px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }};">{{ f.label }}</a>
+          </sc-for>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#8A8578;margin:14px 0 10px;text-transform:uppercase;letter-spacing:0.1em;">Agence / contexte</div>
+        <div style="display:flex;flex-wrap:wrap;gap:9px;">
+          <sc-for list="{{ agencyFilters }}" as="f" hint-placeholder-count="5">
+            <a onClick="{{ f.apply }}" style="cursor:pointer;font-weight:700;font-size:14px;padding:9px 18px;border-radius:var(--pill);border:1.5px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }};">{{ f.label }}</a>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRID -->
+    <section style="max-width:1240px;margin:0 auto;padding:20px 32px 88px;">
+      <div style="font-size:14px;color:#8A8578;font-weight:600;margin-bottom:18px;">{{ resultCount }}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;">
+        <sc-for list="{{ filteredProjects }}" as="p" hint-placeholder-count="9">
+          <div onClick="{{ p.open }}" style="cursor:pointer;background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;" style-hover="border-color:#141414;">
+            <div style="height:82px;background-image:repeating-linear-gradient(135deg,#EEE9DC 0 12px,#E7E1D2 12px 24px);display:flex;align-items:flex-end;justify-content:space-between;padding:16px;">
+              <span style="font-family:var(--font-display);font-weight:700;font-size:12.5px;background:#141414;color:var(--accent);padding:6px 12px;border-radius:var(--pill);">{{ p.typeLabel }}</span>
+              <span style="font-family:'Space Grotesk',monospace;font-size:12px;color:#A39D8C;">{{ p.agence }}</span>
+            </div>
+            <div style="padding:22px;display:flex;flex-direction:column;flex:1;">
+              <h3 style="font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:-0.01em;margin:0;">{{ p.name }}</h3>
+              <p style="font-size:13.5px;line-height:1.55;color:#6E6A60;margin:9px 0 16px;flex:1;">{{ p.desc }}</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;">
+                <sc-for list="{{ p.tags }}" as="t" hint-placeholder-count="3">
+                  <span style="font-size:11.5px;font-weight:600;color:#5A564C;background:var(--bg);padding:5px 10px;border-radius:8px;">{{ t }}</span>
+                </sc-for>
+              </div>
+              <span style="font-weight:700;font-size:14px;color:#141414;">Voir le projet →</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <!-- ===================== PROJECT DETAIL ===================== -->
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ true }}">
+  <main>
+    <section style="max-width:960px;margin:0 auto;padding:56px 32px 0;">
+      <a onClick="{{ goProjects }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:#5A564C;margin-bottom:32px;">← Tous les projets</a>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px;">
+        <span style="font-family:var(--font-display);font-weight:700;font-size:13px;background:var(--accent);color:#141414;padding:7px 14px;border-radius:var(--pill);">{{ cur.typeLabel }}</span>
+        <span style="font-family:var(--font-display);font-weight:700;font-size:13px;background:#141414;color:var(--bg);padding:7px 14px;border-radius:var(--pill);">{{ cur.agence }}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+        <h1 class="te-reveal" style="font-family:var(--font-display);font-weight:700;font-size:clamp(36px,5.4vw,68px);line-height:1.0;letter-spacing:-0.03em;margin:0;">{{ cur.name }}</h1>
+        <sc-if value="{{ cur.logo }}">
+          <img src="{{ cur.logo }}" alt="{{ cur.name }}" style="height:52px;width:auto;object-fit:contain;" />
+        </sc-if>
+      </div>
+      <p style="font-size:18px;line-height:1.6;color:#5A564C;margin:20px 0 0;max-width:60ch;">{{ cur.contexte }}</p>
+      <a href="{{ cur.url }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-weight:700;font-size:14px;color:var(--accent-strong);">Visiter le site du client ↗</a>
+      <sc-if value="{{ cur.metricValue }}">
+        <div style="display:inline-flex;align-items:baseline;gap:10px;margin-top:22px;background:var(--card);border:var(--card-line);border-radius:16px;padding:14px 20px;">
+          <span style="font-family:var(--font-display);font-weight:700;font-size:26px;color:#141414;">{{ cur.metricValue }}</span>
+          <span style="font-size:13px;color:#5A564C;font-weight:600;">{{ cur.metricLabel }}</span>
+        </div>
+      </sc-if>
+    </section>
+
+    <!-- QUICK INFO -->
+    <section style="max-width:960px;margin:0 auto;padding:40px 32px 0;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+        <div style="background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:16px;padding:18px;">
+          <div style="font-size:12px;font-weight:700;color:#8A8578;text-transform:uppercase;letter-spacing:0.08em;">Client</div>
+          <div style="font-family:var(--font-display);font-weight:700;font-size:16px;margin-top:6px;">{{ cur.name }}</div>
+        </div>
+        <div style="background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:16px;padding:18px;">
+          <div style="font-size:12px;font-weight:700;color:#8A8578;text-transform:uppercase;letter-spacing:0.08em;">Type</div>
+          <div style="font-family:var(--font-display);font-weight:700;font-size:16px;margin-top:6px;">{{ cur.typeLabel }}</div>
+        </div>
+        <div style="background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:16px;padding:18px;">
+          <div style="font-size:12px;font-weight:700;color:#8A8578;text-transform:uppercase;letter-spacing:0.08em;">Contexte</div>
+          <div style="font-family:var(--font-display);font-weight:700;font-size:16px;margin-top:6px;">{{ cur.agence }}</div>
+        </div>
+        <div style="background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:16px;padding:18px;">
+          <div style="font-size:12px;font-weight:700;color:#8A8578;text-transform:uppercase;letter-spacing:0.08em;">Rôle</div>
+          <div style="font-family:var(--font-display);font-weight:700;font-size:16px;margin-top:6px;">{{ cur.role }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BODY -->
+    <section style="max-width:960px;margin:0 auto;padding:48px 32px 0;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+        <div>
+          <h2 style="font-family:var(--font-display);font-weight:700;font-size:24px;letter-spacing:-0.01em;margin:0 0 18px;">Objectifs de la mission</h2>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <sc-for list="{{ cur.objectives }}" as="o" hint-placeholder-count="4">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span style="flex:none;width:20px;height:20px;border-radius:6px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-top:1px;">→</span>
+                <span style="font-size:15px;line-height:1.5;color:#3A3730;">{{ o }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div>
+          <h2 style="font-family:var(--font-display);font-weight:700;font-size:24px;letter-spacing:-0.01em;margin:0 0 18px;">Actions réalisées</h2>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <sc-for list="{{ cur.actions }}" as="a" hint-placeholder-count="5">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span style="flex:none;width:6px;height:6px;border-radius:50%;background:#141414;margin-top:8px;"></span>
+                <span style="font-size:15px;line-height:1.5;color:#3A3730;">{{ a }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOLS -->
+    <section style="max-width:960px;margin:0 auto;padding:48px 32px 0;">
+      <h2 style="font-family:var(--font-display);font-weight:700;font-size:24px;letter-spacing:-0.01em;margin:0 0 18px;">Outils utilisés</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        <sc-for list="{{ cur.tools }}" as="t" hint-placeholder-count="4">
+          <span style="font-size:14px;font-weight:600;color:#141414;background:var(--card);border:1px solid rgba(20,20,20,0.1);padding:9px 16px;border-radius:10px;">{{ t }}</span>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- PREV / NEXT -->
+    <section style="max-width:960px;margin:0 auto;padding:56px 32px 0;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <a onClick="{{ prev.open }}" style="cursor:pointer;background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:16px;padding:20px;" style-hover="border-color:#141414;">
+          <div style="font-size:12px;font-weight:700;color:#8A8578;text-transform:uppercase;letter-spacing:0.08em;">← Projet précédent</div>
+          <div style="font-family:var(--font-display);font-weight:700;font-size:18px;margin-top:8px;">{{ prev.name }}</div>
+        </a>
+        <a onClick="{{ next.open }}" style="cursor:pointer;background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:16px;padding:20px;text-align:right;" style-hover="border-color:#141414;">
+          <div style="font-size:12px;font-weight:700;color:#8A8578;text-transform:uppercase;letter-spacing:0.08em;">Projet suivant →</div>
+          <div style="font-family:var(--font-display);font-weight:700;font-size:18px;margin-top:8px;">{{ next.name }}</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="max-width:960px;margin:0 auto;padding:56px 32px 88px;">
+      <div style="background:#141414;border-radius:var(--radius);padding:48px 40px;text-align:center;color:var(--bg);">
+        <h2 class="te-reveal" style="font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.6vw,40px);letter-spacing:-0.02em;margin:0 auto;max-width:20ch;">Vous avez un projet similaire ?</h2>
+        <p style="font-size:16px;color:#B8B4AB;margin:16px auto 0;max-width:46ch;">Parlons de votre stratégie de visibilité et d'acquisition.</p>
+        <a onClick="{{ goContact }}" style="cursor:pointer;display:inline-flex;align-items:center;gap:9px;background:var(--accent);color:#141414;font-weight:700;font-size:15px;padding:15px 28px;border-radius:var(--pill);margin-top:26px;">Me contacter →</a>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <!-- ===================== CONTACT ===================== -->
+  <sc-if value="{{ isContact }}" hint-placeholder-val="{{ true }}">
+  <main>
+    <section style="max-width:1240px;margin:0 auto;padding:72px 32px 88px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
+        <div>
+          <div style="font-size:12.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8A8578;margin-bottom:16px;">Contact</div>
+          <h1 class="te-reveal" style="font-family:var(--font-display);font-weight:700;font-size:clamp(38px,5.4vw,66px);line-height:1.0;letter-spacing:-0.03em;margin:0;">Travaillons ensemble</h1>
+          <p style="font-size:18px;line-height:1.6;color:#5A564C;margin:22px 0 36px;max-width:44ch;">Un audit SEO, une campagne à lancer ou une stratégie à structurer ? Écrivez-moi, je réponds sous 48h.</p>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <a href="mailto:Yoan.tavel@gmail.com" style="display:flex;align-items:center;gap:14px;background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:16px;padding:18px 20px;" style-hover="border-color:#141414;">
+              <span style="width:40px;height:40px;border-radius:10px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-weight:800;">@</span>
+              <span><span style="display:block;font-size:12px;color:#8A8578;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Email</span><span style="font-family:var(--font-display);font-weight:700;font-size:17px;">Yoan.tavel@gmail.com</span></span>
+            </a>
+            <a href="tel:0665013779" style="display:flex;align-items:center;gap:14px;background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:16px;padding:18px 20px;" style-hover="border-color:#141414;">
+              <span style="width:40px;height:40px;border-radius:10px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-weight:800;">☎</span>
+              <span><span style="display:block;font-size:12px;color:#8A8578;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Téléphone</span><span style="font-family:var(--font-display);font-weight:700;font-size:17px;">06 65 01 37 79</span></span>
+            </a>
+            <a href="https://www.linkedin.com/in/yoan-duclaux/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:14px;background:var(--card);border:var(--card-line);box-shadow:var(--card-shadow);border-radius:16px;padding:18px 20px;" style-hover="border-color:#141414;">
+              <span style="width:40px;height:40px;border-radius:10px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-weight:800;">in</span>
+              <span><span style="display:block;font-size:12px;color:#8A8578;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">LinkedIn</span><span style="font-family:var(--font-display);font-weight:700;font-size:17px;">Yoan Duclaux</span></span>
+            </a>
+          </div>
+        </div>
+        <div style="background:#141414;border-radius:var(--radius);padding:40px;color:var(--bg);">
+          <h2 style="font-family:var(--font-display);font-weight:700;font-size:24px;margin:0 0 24px;">Envoyer un message</h2>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div>
+              <label style="display:block;font-size:13px;font-weight:600;color:#B8B4AB;margin-bottom:7px;">Nom</label>
+              <input type="text" placeholder="Votre nom" style="width:100%;background:#1E1E1E;border:1px solid #2E2E2E;border-radius:12px;padding:13px 15px;color:var(--bg);font-family:inherit;font-size:15px;">
+            </div>
+            <div>
+              <label style="display:block;font-size:13px;font-weight:600;color:#B8B4AB;margin-bottom:7px;">Email</label>
+              <input type="email" placeholder="vous@exemple.com" style="width:100%;background:#1E1E1E;border:1px solid #2E2E2E;border-radius:12px;padding:13px 15px;color:var(--bg);font-family:inherit;font-size:15px;">
+            </div>
+            <div>
+              <label style="display:block;font-size:13px;font-weight:600;color:#B8B4AB;margin-bottom:7px;">Votre projet</label>
+              <textarea rows="4" placeholder="Décrivez votre besoin (SEO, Google Ads, Meta Ads…)" style="width:100%;background:#1E1E1E;border:1px solid #2E2E2E;border-radius:12px;padding:13px 15px;color:var(--bg);font-family:inherit;font-size:15px;resize:vertical;"></textarea>
+            </div>
+            <a href="mailto:Yoan.tavel@gmail.com" style="display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--accent);color:#141414;font-weight:700;font-size:15px;padding:15px 28px;border-radius:var(--pill);">Envoyer le message →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer style="background:#141414;color:var(--bg);">
+    <div style="max-width:1240px;margin:0 auto;padding:56px 32px;display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start;">
+      <div style="max-width:34ch;">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--accent);color:#141414;border-radius:9px;font-family:var(--font-display);font-weight:700;font-size:17px;">Y</span>
+          <span style="font-family:var(--font-display);font-weight:700;font-size:18px;">Yoan Duclaux<span style="color:var(--accent);">.</span></span>
+        </div>
+        <p style="font-size:14.5px;line-height:1.6;color:#8A8578;margin:0;">Consultant SEO &amp; paid media. Visibilité organique, Google Ads, Meta Ads — au service de la croissance des marques.</p>
+      </div>
+      <div style="display:flex;gap:56px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#8A8578;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">Navigation</div>
+          <div style="display:flex;flex-direction:column;gap:9px;font-weight:600;">
+            <a onClick="{{ goHome }}" style="cursor:pointer;color:var(--bg);">Accueil</a>
+            <a onClick="{{ goProjects }}" style="cursor:pointer;color:var(--bg);">Projets</a>
+            <a onClick="{{ goContact }}" style="cursor:pointer;color:var(--bg);">Contact</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#8A8578;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">Contact</div>
+          <div style="display:flex;flex-direction:column;gap:9px;font-weight:600;">
+            <a href="mailto:Yoan.tavel@gmail.com" style="color:var(--bg);">Yoan.tavel@gmail.com</a>
+            <a href="tel:0665013779" style="color:var(--bg);">06 65 01 37 79</a>
+            <a href="https://www.linkedin.com/in/yoan-duclaux/" target="_blank" rel="noopener" style="color:var(--bg);">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:1px solid #2A2A2A;">
+      <div style="max-width:1240px;margin:0 auto;padding:20px 32px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:13px;color:#8A8578;">
+        <span>© 2026 Yoan Duclaux. Tous droits réservés.</span>
+        <span>SEO · Google Ads · Meta Ads</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Orange chaud&quot;,&quot;options&quot;:[&quot;Or numérique&quot;,&quot;Orange chaud&quot;,&quot;Bleu électrique&quot;,&quot;Violet créatif&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Thème&quot;,&quot;label&quot;:&quot;Couleur d'accent&quot;},&quot;ambiance&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Chaude&quot;,&quot;options&quot;:[&quot;Chaude&quot;,&quot;Froide&quot;,&quot;Contrastée&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Thème&quot;,&quot;label&quot;:&quot;Ambiance du fond&quot;},&quot;fond&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Uni&quot;,&quot;options&quot;:[&quot;Uni&quot;,&quot;Grille&quot;,&quot;Points&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Thème&quot;,&quot;label&quot;:&quot;Texture du fond&quot;},&quot;police&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Grotesk&quot;,&quot;options&quot;:[&quot;Grotesk&quot;,&quot;Éditorial&quot;,&quot;Industriel&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Typographie&quot;,&quot;label&quot;:&quot;Style des titres&quot;},&quot;formes&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Douce&quot;,&quot;options&quot;:[&quot;Douce&quot;,&quot;Nette&quot;,&quot;Ronde&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Formes&quot;,&quot;label&quot;:&quot;Forme des angles&quot;},&quot;cartes&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Ombré&quot;,&quot;options&quot;:[&quot;Bordé&quot;,&quot;Ombré&quot;,&quot;Plat&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Formes&quot;,&quot;label&quot;:&quot;Style des cartes&quot;}}">
+class Component extends DCLogic {
+  state = { route: 'home', slug: null, typeFilter: 'Tous', agencyFilter: 'Toutes', expOpen: 0 };
+
+  toggleExp(i) {
+    this.setState({ expOpen: this.state.expOpen === i ? -1 : i });
+  }
+
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+  applyTheme() {
+    const A = { 'Or numérique':['#F5B82E','#C8971F'], 'Orange chaud':['#FF8A3D','#D96A1E'], 'Bleu électrique':['#3D6BFF','#2A4FCC'], 'Violet créatif':['#7B5BFF','#5B3FE0'] };
+    const B = { 'Chaude':['#F3EFE6','#FFFFFF'], 'Froide':['#ECEEF1','#FFFFFF'], 'Contrastée':['#E7E2D6','#FFFFFF'] };
+    const R = { 'Douce':['22px','999px'], 'Nette':['5px','6px'], 'Ronde':['32px','999px'] };
+    const a = A[this.props.accent] || A['Or numérique'];
+    const b = B[this.props.ambiance] || B['Chaude'];
+    const r = R[this.props.formes] || R['Douce'];
+    const s = document.documentElement.style;
+    s.setProperty('--accent', a[0]); s.setProperty('--accent-strong', a[1]);
+    s.setProperty('--bg', b[0]); s.setProperty('--card', b[1]);
+    s.setProperty('--radius', r[0]); s.setProperty('--pill', r[1]);
+    const F = { 'Grotesk':"'Space Grotesk', sans-serif", 'Éditorial':"'DM Serif Display', serif", 'Industriel':"'Archivo', sans-serif" };
+    s.setProperty('--font-display', F[this.props.police] || F['Grotesk']);
+    const C = { 'Bordé':['1px solid rgba(20,20,20,0.16)','none'], 'Ombré':['1px solid rgba(20,20,20,0.04)','0 14px 38px rgba(20,20,20,0.13)'], 'Plat':['none','none'] };
+    const c = C[this.props.cartes] || C['Bordé'];
+    s.setProperty('--card-line', c[0]); s.setProperty('--card-shadow', c[1]);
+    const T = { 'Uni':['none','auto'], 'Grille':['linear-gradient(rgba(20,20,20,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(20,20,20,0.05) 1px,transparent 1px)','34px 34px'], 'Points':['radial-gradient(rgba(20,20,20,0.10) 1.4px, transparent 1.4px)','22px 22px'] };
+    const t = T[this.props.fond] || T['Uni'];
+    document.body.style.backgroundImage = t[0];
+    document.body.style.backgroundSize = t[1];
+  }
+
+  go(route, slug) {
+    this.setState({ route, slug: slug !== undefined ? slug : this.state.slug });
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  rawData() {
+    return [
+      { url:'http://lady-sushi.com/', name:'Lady Sushi', slug:'lady-sushi', type:'SEO', agence:'La Jungle', details:['Rédaction des articles de blog optimisée','Corrections des erreurs techniques','Mise en place d\u2019un calendrier éditorial','Recherche de mots-clés','Optimisation des meta description / title','Optimisation des données structurées (schema.org)','Maillage interne','Rapport SEO à chaque trimestre'] },
+      { url:'https://groupedci.fr/', name:'Groupe DCI', slug:'groupe-dci', type:'SEO', agence:'La Jungle', details:['Optimisation des meta description / title','Proposition de nouvelles structures Hn','Optimisation des données structurées (schema.org)','Recherche de mots-clés','Rapport SEO à chaque trimestre'] },
+      { url:'https://formabelle.fr/', name:'Formabelle', slug:'formabelle', type:'SEO / GEO', agence:'La Jungle', details:['Rédaction des articles de blog optimisée','Corrections des erreurs techniques','Mise en place d\u2019un calendrier éditorial','Recherche de mots-clés','Optimisation des meta description / title','Optimisation des données structurées (schema.org)','Maillage interne','Rapport SEO + recommandations trimestriel','Campagne de notoriété avec mentions Reddit','Achat de backlinks'] },
+      { url:'https://decoset.fr/', name:'Decoset', slug:'decoset', type:'SEO', agence:'La Jungle', details:['Optimisation des meta description / title','Proposition de nouvelles structures Hn','Optimisation des données structurées (schema.org)','Recherche de mots-clés','Proposition d\u2019une nouvelle arborescence','Rapport SEO + recommandations trimestriel'] },
+      { url:'https://www.bourytallon.com/', name:'Boury Tallon', slug:'boury-tallon', type:'Google Ads', agence:'La Jungle', details:['Rapport Google Ads à chaque trimestre','Ajustement des campagnes search','Recherche de nouveaux mots-clés','Exclusion des termes non pertinents'] },
+      { url:'https://www.mmconseil.com/', name:'MM Conseil', slug:'mm-conseil', type:'Google Ads', agence:'La Jungle', details:['Rapport Google Ads à chaque trimestre','Ajustement des campagnes search','Recherche de nouveaux mots-clés','Exclusion des termes non pertinents'] },
+      { url:'https://charleselie94.fr/fr/', name:'Charles Élie 94', slug:'charles-elie-94', type:'SEO', agence:'Myniweb', details:['Rédaction des articles de blog optimisée','Corrections des 404 / 301','Mise en place d\u2019un calendrier éditorial','Recherche de mots-clés','Optimisation des meta description / title','Optimisation des données structurées (schema.org)','Maillage interne','Création des fiches produits','Rapport SEO + recommandations trimestriel'] },
+      { url:'https://groupe-tandem.fr/', name:'Groupe Tandem', slug:'groupe-tandem', type:'SEO', agence:'La Jungle', details:['Rédaction des articles de blog optimisée','Création de sous-pages selon les restaurants','Mise en place d\u2019un calendrier éditorial','Recherche de mots-clés','Optimisation des meta description / title','Données structurées : prix, notes, lieux (schema.org)','Maillage interne','Rapport SEO + recommandations trimestriel'] },
+      { url:'https://stations-e.com/fr', name:'Stations-e', slug:'stations-e', type:'SEO', agence:'Freelance', details:['Rédaction des articles de blog optimisée'] },
+      { url:'https://fr.vivami.co/', name:'Vivami', slug:'vivami', type:'SEO', agence:'Myniweb', details:['Rédaction d\u2019articles de blog pour des liens internationaux (anglais et espagnol)'] },
+      { url:'https://semsamar.fr/', name:'Semsamar', slug:'semsamar', type:'SEO', agence:'La Jungle', details:['Rédaction des articles de blog optimisée','Optimisation des meta-données','Proposition de nouvelle page'] },
+      { url:'https://www.graindemalice.fr/', name:'Grain de Malice', slug:'grain-de-malice', type:'SEO', agence:'Digimood', details:[] },
+      { url:'https://www.bananamoon.com/fr/', name:'Banana Moon', slug:'banana-moon', type:'SEO', agence:'Digimood', details:[] },
+      { url:'https://www.pacamat.fr/', name:'Pacamat', slug:'pacamat', type:'SEO', agence:'Myniweb', details:[] },
+      { url:'https://auditetdiagnostic.fr/', name:'Audit et Diagnostic', slug:'audit-et-diagnostic', type:'SEO', agence:'Freelance', details:[] },
+      { url:'https://www.groupe-cca.com/', name:'Groupe CCA', slug:'groupe-cca', type:'SEO', agence:'La Jungle', details:[] },
+      { url:'https://francetvstudio.fr/', name:'France TV Studio', slug:'france-tv-studio', type:'SEO', agence:'La Jungle', details:[] },
+      { url:'https://afpa.org/', name:'AFPA', slug:'afpa', type:'SEO', agence:'La Jungle', details:[] },
+      { url:'https://www.mpedia.fr/', name:'mpedia', slug:'mpedia', type:'SEO', agence:'La Jungle', details:[] },
+      { url:'https://www.mrkicks.fr/', name:'Mr Kicks', slug:'mr-kicks', type:'Google Ads', agence:'Freelance', details:[] },
+      { url:'https://www.resellpro.net/', name:'ResellPro', slug:'resellpro', type:'Google Ads', agence:'Freelance', details:[] },
+      { url:'https://cesap.asso.fr/', name:'CESAP', slug:'cesap', type:'SEO', agence:'La Jungle', details:[] },
+      { url:'https://orientazione.isula.corsica/', name:'Orientazione (Isula)', slug:'orientazione', type:'Meta Ads', agence:'La Jungle', details:[] },
+      { url:'https://capmattei.com/', name:'Distillerie Cap Mattei', slug:'distillerie-cap-mattei', type:'SEO', agence:'La Jungle', logo:'./logos/distillerie-cap-mattei.png', metricValue:'1,5 M', metricLabel:'Impressions (Google Search Console)', details:['Rédaction des pages catégories','Rédaction des articles de blog optimisée','Optimisation du CTR (meta title / description)','Maillage interne'] }
+    ];
+  }
+
+  tagsFor(type) {
+    if (type === 'SEO / GEO') return ['SEO', 'SEO local', 'GEO', 'Contenu'];
+    if (type === 'Google Ads') return ['Google Ads', 'Search', 'Optimisation', 'Tracking'];
+    if (type === 'Meta Ads') return ['Meta Ads', 'Paid social', 'Audiences', 'Créas'];
+    return ['SEO', 'Audit technique', 'Contenu', 'Mots-clés'];
+  }
+
+  shortDesc(type) {
+    if (type === 'SEO / GEO') return 'Référencement naturel et visibilité locale : technique, contenu géolocalisé et netlinking.';
+    if (type === 'Google Ads') return 'Gestion et optimisation de campagnes Google Ads pour maximiser la rentabilité des annonces.';
+    if (type === 'Meta Ads') return 'Campagnes publicitaires Meta ciblées : audiences, créations et suivi des conversions.';
+    return 'Optimisation SEO complète : technique, contenu, données structurées et suivi de positionnement.';
+  }
+
+  roleFor(type) {
+    if (type === 'SEO / GEO') return 'Consultant SEO & GEO';
+    if (type === 'Google Ads') return 'Traffic Manager';
+    if (type === 'Meta Ads') return 'Traffic Manager';
+    return 'Consultant SEO';
+  }
+
+  contexteFor(type, name) {
+    if (type === 'Google Ads') return 'Accompagnement de ' + name + ' sur ses campagnes Google Ads : structuration, pilotage et optimisation continue pour améliorer la performance et la rentabilité des annonces.';
+    if (type === 'Meta Ads') return 'Mise en place et gestion des campagnes Meta Ads de ' + name + ' : ciblage des audiences, tests créatifs et suivi des conversions pour générer du trafic qualifié.';
+    if (type === 'SEO / GEO') return 'Mission SEO et référencement local pour ' + name + ' : renforcer la visibilité organique du site tout en développant sa présence sur les requêtes géolocalisées.';
+    return 'Mission d\u2019optimisation SEO pour ' + name + ' : améliorer la visibilité organique du site et renforcer sa présence sur les moteurs de recherche.';
+  }
+
+  objectivesFor(type) {
+    if (type === 'Google Ads') return ['Structurer et fiabiliser les campagnes search', 'Améliorer la rentabilité et le ROAS', 'Réduire le coût par acquisition', 'Générer des leads / ventes qualifiés'];
+    if (type === 'Meta Ads') return ['Créer des campagnes ciblées et performantes', 'Tester visuels et audiences', 'Améliorer le taux de conversion', 'Augmenter la notoriété et le trafic qualifié'];
+    if (type === 'SEO / GEO') return ['Améliorer la visibilité organique', 'Développer la présence sur les requêtes locales', 'Optimiser les contenus géolocalisés', 'Renforcer la structure technique du site'];
+    return ['Améliorer la visibilité organique', 'Identifier les opportunités de mots-clés', 'Optimiser les pages stratégiques', 'Renforcer la structure technique et le maillage'];
+  }
+
+  actionsFor(p) {
+    if (p.details && p.details.length) return p.details;
+    if (p.type === 'Google Ads') return ['Structuration et pilotage des campagnes search', 'Recherche et ajustement des mots-clés', 'Exclusion des termes non pertinents', 'Reporting régulier des performances', 'Détails complets à venir'];
+    if (p.type === 'Meta Ads') return ['Définition des audiences cibles', 'Création et test des visuels publicitaires', 'Optimisation des conversions', 'Reporting des performances', 'Détails complets à venir'];
+    return ['Audit SEO technique du site', 'Recherche de mots-clés', 'Optimisation des balises et contenus', 'Maillage interne et suivi des performances', 'Détails complets à venir'];
+  }
+
+  toolsFor(type) {
+    if (type === 'Google Ads') return ['Google Ads', 'Google Analytics', 'Google Tag Manager', 'Looker Studio'];
+    if (type === 'Meta Ads') return ['Meta Business Suite', 'Meta Ads Manager', 'Google Analytics', 'Looker Studio'];
+    return ['Google Search Console', 'Screaming Frog', 'Semrush', 'Ahrefs', 'Google Analytics'];
+  }
+
+  buildProjects() {
+    if (this._projects) return this._projects;
+    const self = this;
+    this._projects = this.rawData().map(function (p) {
+      return Object.assign({}, p, {
+        typeLabel: p.type,
+        typeKey: p.type,
+        tags: self.tagsFor(p.type),
+        desc: self.shortDesc(p.type),
+        role: self.roleFor(p.type),
+        contexte: self.contexteFor(p.type, p.name),
+        objectives: self.objectivesFor(p.type),
+        actions: self.actionsFor(p),
+        tools: self.toolsFor(p.type),
+        open: function () { self.go('detail', p.slug); }
+      });
+    });
+    return this._projects;
+  }
+
+  chip(active) {
+    return active
+      ? { bg: '#141414', color: 'var(--bg)', border: '#141414' }
+      : { bg: 'transparent', color: '#141414', border: 'rgba(20,20,20,0.18)' };
+  }
+
+  renderVals() {
+    const projects = this.buildProjects();
+    const st = this.state;
+
+    const typeVals = ['Tous', 'SEO', 'SEO / GEO', 'Google Ads', 'Meta Ads'];
+    const agencyVals = ['Toutes', 'La Jungle', 'Myniweb', 'Digimood', 'Freelance'];
+
+    const typeFilters = typeVals.map((v) => {
+      const c = this.chip(st.typeFilter === v);
+      return { label: v, bg: c.bg, color: c.color, border: c.border, apply: () => this.setState({ typeFilter: v }) };
+    });
+    const agencyFilters = agencyVals.map((v) => {
+      const c = this.chip(st.agencyFilter === v);
+      return { label: v, bg: c.bg, color: c.color, border: c.border, apply: () => this.setState({ agencyFilter: v }) };
+    });
+
+    const filteredProjects = projects.filter((p) =>
+      (st.typeFilter === 'Tous' || p.type === st.typeFilter) &&
+      (st.agencyFilter === 'Toutes' || p.agence === st.agencyFilter)
+    );
+
+    const n = filteredProjects.length;
+    const resultCount = n + (n > 1 ? ' projets' : ' projet');
+
+    const featured = ['lady-sushi', 'formabelle', 'charles-elie-94', 'groupe-tandem', 'boury-tallon', 'orientazione']
+      .map((s) => projects.find((p) => p.slug === s)).filter(Boolean);
+
+    const idx = projects.findIndex((p) => p.slug === st.slug);
+    const cur = idx >= 0 ? projects[idx] : projects[0];
+    const prev = projects[(idx - 1 + projects.length) % projects.length];
+    const next = projects[(idx + 1) % projects.length];
+
+    const expertises = [
+      { num: '01', title: 'SEO', desc: 'Audit technique, contenu optimisé, données structurées et netlinking pour une visibilité organique durable.' },
+      { num: '02', title: 'SEO local / GEO', desc: 'Référencement géolocalisé pour capter les recherches locales et dominer votre zone de chalandise.' },
+      { num: '03', title: 'Google Ads', desc: 'Campagnes search structurées et optimisées pour maximiser la rentabilité et générer des leads qualifiés.' }
+    ];
+
+    const skills = ['Référencement naturel', 'Google Ads', 'Meta Ads', 'SEO technique', 'Netlinking', 'Google Search Console', 'Semrush', 'Screaming Frog', 'Claude Code', 'Relations clients'];
+    const clientLogos = [
+      { name: 'Distillerie Cap Mattei', src: './logos/clients/cap-mattei.svg' },
+      { name: 'AFPA — Association Française de Pédiatrie Ambulatoire', src: './logos/clients/afpa-pediatrie.svg' },
+      { name: 'Groupe Tandem', src: './logos/clients/tandem.svg' },
+      { name: 'Decoset', src: './logos/clients/decoset.svg' },
+      { name: 'Formabelle', src: './logos/clients/formabelle.svg' },
+      { name: 'Association Hospitalière Sainte-Marie', src: './logos/clients/ahsm.jpg' }
+    ];
+    const toolLogos = [
+      { name: 'Google Search Console', src: './logos/tools/google-search-console.png' },
+      { name: 'Google Analytics', src: './logos/tools/google-analytics.png' },
+      { name: 'Semrush', src: './logos/tools/semrush.png' },
+      { name: 'Screaming Frog', src: './logos/tools/screaming-frog.webp' },
+      { name: 'WordPress', src: './logos/tools/wordpress.webp' },
+      { name: 'Google Ads', src: './logos/tools/google-ads.png' },
+      { name: 'Meta', src: './logos/tools/meta.png' },
+      { name: 'Claude Code', src: './logos/tools/claude-code.png' },
+      { name: 'Shopify', src: './logos/tools/shopify.png' },
+      { name: 'Looker Studio', src: './logos/tools/looker-studio.png' },
+      { name: 'Bing Webmaster Tools', src: './logos/tools/bing-webmaster-tools.png' },
+      { name: 'Slack', src: './logos/tools/slack.png' }
+    ];
+
+    const experiences = [
+      { period: 'Sept. 2025 — Août 2026', role: 'Consultant SEO / SEA', org: 'La Jungle', logo: './logos/experiences/la-jungle.png', desc: 'Référencement naturel et campagnes payantes pour un portefeuille de clients variés.' },
+      { period: 'Janv. — Févr. 2025', role: 'Consultant SEO', org: 'Digimood', logo: './logos/experiences/digimood.png', desc: 'Optimisation SEO de sites clients : technique, contenu et suivi de positionnement.' },
+      { period: 'Sept. — Déc. 2024', role: 'Webdesigner WordPress', org: 'Odace', logo: './logos/experiences/odace.png', desc: 'Création et intégration de sites web sous WordPress.' },
+      { period: 'Depuis juil. 2024', role: 'Consultant SEO Freelance', org: 'Myniweb', logo: './logos/experiences/myniweb.png', desc: 'Missions SEO en indépendant : audits techniques, contenu et netlinking.' },
+      { period: '2022 — 2024', role: 'Consultant SEO en alternance', org: 'Myniweb', logo: './logos/experiences/myniweb.png', desc: 'Alternance dédiée à l\u2019acquisition de trafic organique et au référencement.' },
+      { period: '2021 — 2024', role: 'Auto-entrepreneur — Upsell 2.0', org: 'Sneakers reconditionnées', logo: './logos/experiences/upsell.png', desc: 'Création et gestion de ma première entreprise e-commerce, en parallèle de mes études.' }
+    ].map(function (e, i) {
+      return Object.assign({}, e, { isOpen: st.expOpen === i, toggle: () => this.toggleExp(i) });
+    }, this);
+
+    const education = [
+      { period: '2025 — 2026 · en cours', title: 'Mastère Marketing & Communication (M1)', org: 'Ynov Campus' },
+      { period: '2025', title: 'Bachelor Marketing & Communication', org: 'Ynov Campus' },
+      { period: '2022 — 2024', title: 'BTS Communication', org: 'IFC — Avignon' },
+      { period: '2021', title: 'Baccalauréat général — mention AB', org: 'Lycée Jean Vilar' }
+    ];
+
+    const process = [
+      { step: 'ÉTAPE 01', title: 'Audit', desc: 'Analyse complète : technique, contenu, concurrence et opportunités.' },
+      { step: 'ÉTAPE 02', title: 'Stratégie', desc: 'Feuille de route priorisée selon vos objectifs business.' },
+      { step: 'ÉTAPE 03', title: 'Exécution', desc: 'Mise en œuvre : optimisations, contenus et campagnes.' },
+      { step: 'ÉTAPE 04', title: 'Reporting', desc: 'Suivi des KPIs et recommandations à chaque trimestre.' }
+    ];
+
+    return {
+      isHome: st.route === 'home',
+      isProjects: st.route === 'projects',
+      isDetail: st.route === 'detail',
+      isContact: st.route === 'contact',
+      goHome: () => this.go('home'),
+      goProjects: () => this.go('projects'),
+      goContact: () => this.go('contact'),
+      projects, filteredProjects, featured, resultCount,
+      typeFilters, agencyFilters,
+      expertises, process, skills, toolLogos, clientLogos, experiences, education,
+      cur, prev, next
+    };
+  }
+}
+</script>
+
+<script>
+(function () {
+  function wrapWords(root) {
+    if (root.dataset.teWrapped) return;
+    root.dataset.teWrapped = '1';
+    var i = 0;
+    Array.prototype.forEach.call(Array.prototype.slice.call(root.childNodes), function (node) {
+      if (node.nodeType === 3) {
+        var parts = node.textContent.split(/(\s+)/);
+        var frag = document.createDocumentFragment();
+        parts.forEach(function (part) {
+          if (part === '') return;
+          if (/^\s+$/.test(part)) {
+            frag.appendChild(document.createTextNode(part));
+          } else {
+            var span = document.createElement('span');
+            span.className = 'te-word';
+            span.style.setProperty('--i', i++);
+            span.textContent = part;
+            frag.appendChild(span);
+          }
+        });
+        root.replaceChild(frag, node);
+      } else if (node.nodeType === 1 && node.tagName !== 'BR') {
+        var wrapper = document.createElement('span');
+        wrapper.className = 'te-word';
+        wrapper.style.setProperty('--i', i++);
+        node.parentNode.insertBefore(wrapper, node);
+        wrapper.appendChild(node);
+      }
+    });
+  }
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('te-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  function initReveal() {
+    document.querySelectorAll('.te-reveal:not([data-te-wrapped])').forEach(function (el) {
+      wrapWords(el);
+      observer.observe(el);
+    });
+  }
+
+  function initMeteors() {
+    document.querySelectorAll('.meteor-field:not([data-dc-meteors])').forEach(function (el) {
+      el.dataset.dcMeteors = '1';
+      var count = 20;
+      for (var i = 0; i < count; i++) {
+        var m = document.createElement('span');
+        m.className = 'dc-meteor';
+        m.style.left = (((i + 0.5) / count) * 100) + '%';
+        m.style.animationDelay = (Math.random() * 5) + 's';
+        m.style.animationDuration = (5 + Math.random() * 5) + 's';
+        el.appendChild(m);
+      }
+    });
+  }
+
+  var scheduled = false;
+  var mo = new MutationObserver(function () {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () { scheduled = false; initReveal(); initMeteors(); });
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initReveal();
+    initMeteors();
+    mo.observe(document.body, { childList: true, subtree: true });
+  });
+})();
+</script>
+</body>
+</html>
