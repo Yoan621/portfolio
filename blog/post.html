@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Article — Yoan Duclaux</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  :root { --accent:#F5B82E; --bg:#F3EFE6; --card:#FFFFFF; --font-display:'Space Grotesk', sans-serif; }
+  body { margin:0; font-family:'Manrope', system-ui, sans-serif; color:#141414; background:var(--bg); -webkit-font-smoothing:antialiased; }
+  a { color:#141414; }
+  header { position:sticky; top:0; z-index:50; background:rgba(243,239,230,0.82); backdrop-filter:blur(14px); border-bottom:1px solid rgba(20,20,20,0.08); }
+  nav { max-width:1240px; margin:0 auto; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+  .logo { display:flex; align-items:center; gap:9px; text-decoration:none; }
+  .logo-mark { display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; background:#141414; color:var(--accent); border-radius:9px; font-family:var(--font-display); font-weight:700; font-size:17px; }
+  .logo-name { font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:-0.02em; }
+  main { max-width:760px; margin:0 auto; padding:56px 32px 88px; }
+  .back { display:inline-flex; align-items:center; gap:8px; font-weight:700; font-size:14px; color:#5A564C; margin-bottom:28px; text-decoration:none; }
+  .tag { display:inline-flex; font-family:var(--font-display); font-weight:700; font-size:13px; background:var(--accent); color:#141414; padding:7px 14px; border-radius:999px; margin-bottom:18px; }
+  h1 { font-family:var(--font-display); font-weight:700; font-size:clamp(30px,5vw,48px); line-height:1.05; letter-spacing:-0.03em; margin:0; }
+  .meta { font-size:13.5px; color:#8A8578; font-weight:600; margin-top:16px; }
+  .cover { width:100%; border-radius:22px; margin:32px 0; object-fit:cover; max-height:420px; }
+  .content { font-size:17px; line-height:1.75; color:#2A2822; }
+  .content h2 { font-family:var(--font-display); font-weight:700; font-size:26px; margin:36px 0 14px; letter-spacing:-0.01em; }
+  .content h3 { font-family:var(--font-display); font-weight:700; font-size:21px; margin:28px 0 12px; }
+  .content p { margin:0 0 18px; }
+  .content a { color:#C8971F; font-weight:600; }
+  .content ul, .content ol { margin:0 0 18px; padding-left:22px; }
+  .content li { margin-bottom:8px; }
+  .content code { background:#EFEAE0; padding:2px 6px; border-radius:6px; font-size:0.9em; }
+  .notfound { text-align:center; padding:80px 0; color:#8A8578; font-weight:600; }
+  footer { background:#141414; color:var(--bg); padding:32px; text-align:center; font-size:13px; margin-top:60px; }
+  footer a { color:var(--bg); }
+</style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a class="logo" href="../index.html">
+        <span class="logo-mark">Y</span>
+        <span class="logo-name">Yoan Duclaux<span style="color:var(--accent);">.</span></span>
+      </a>
+      <div style="display:flex;align-items:center;gap:24px;font-weight:600;font-size:15px;">
+        <a href="../index.html" style="text-decoration:none;">Accueil</a>
+        <a href="./index.html" style="text-decoration:none;">Blog</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <a class="back" href="./index.html">← Tous les articles</a>
+    <div id="post-root">Chargement…</div>
+  </main>
+
+  <footer>© 2026 Yoan Duclaux. <a href="mailto:Yoan.tavel@gmail.com">Yoan.tavel@gmail.com</a></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script type="module">
+  import { supabase } from './supabase-client.js';
+
+  const slug = new URLSearchParams(location.search).get('slug');
+  const root = document.getElementById('post-root');
+
+  if (!slug) {
+    root.innerHTML = '<div class="notfound">Article introuvable.</div>';
+  } else {
+    const { data: post } = await supabase
+      .from('blog_posts')
+      .select('title,content,excerpt,cover_image,published_at,blog_categories(name)')
+      .eq('slug', slug)
+      .eq('status', 'published')
+      .maybeSingle();
+
+    if (!post) {
+      root.innerHTML = '<div class="notfound">Article introuvable ou dépublié.</div>';
+    } else {
+      const esc = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      document.title = post.title + ' — Yoan Duclaux';
+      const date = post.published_at ? new Date(post.published_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
+      root.innerHTML = `
+        <span class="tag">${esc(post.blog_categories ? post.blog_categories.name : 'Blog')}</span>
+        <h1>${esc(post.title)}</h1>
+        <div class="meta">${date}</div>
+        ${post.cover_image ? `<img class="cover" src="${esc(post.cover_image)}" alt="${esc(post.title)}">` : ''}
+        <div class="content">${marked.parse(post.content || '')}</div>
+      `;
+    }
+  }
+</script>
+</body>
+</html>

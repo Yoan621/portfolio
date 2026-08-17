@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Blog — Yoan Duclaux</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  :root { --accent:#F5B82E; --accent-strong:#C8971F; --bg:#F3EFE6; --card:#FFFFFF; --font-display:'Space Grotesk', sans-serif; }
+  body { margin:0; font-family:'Manrope', system-ui, sans-serif; color:#141414; background:var(--bg); -webkit-font-smoothing:antialiased; }
+  input, textarea, select { font-family:inherit; font-size:14px; }
+  button { font-family:inherit; cursor:pointer; }
+
+  /* ---- login ---- */
+  #login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .login-box { background:var(--card); border-radius:22px; padding:40px; width:100%; max-width:380px; box-shadow:0 14px 38px rgba(20,20,20,0.08); }
+  .login-box h1 { font-family:var(--font-display); font-size:22px; margin:0 0 6px; }
+  .login-box p { color:#8A8578; font-size:13.5px; margin:0 0 24px; }
+  .field { margin-bottom:16px; }
+  .field label { display:block; font-size:12.5px; font-weight:700; color:#5A564C; margin-bottom:6px; }
+  .field input, .field textarea, .field select { width:100%; border:1px solid rgba(20,20,20,0.16); border-radius:10px; padding:11px 13px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#141414; color:var(--accent); font-weight:700; font-size:14px; padding:12px 22px; border-radius:999px; border:none; }
+  .btn.secondary { background:transparent; color:#141414; border:1.5px solid rgba(20,20,20,0.18); }
+  .btn.danger { background:#E4514B; color:#fff; }
+  .btn.full { width:100%; }
+  .error { color:#C0392B; font-size:13px; margin-top:10px; }
+
+  /* ---- app shell ---- */
+  #app { display:none; min-height:100vh; }
+  .topbar { position:sticky; top:0; z-index:10; background:#141414; color:var(--bg); padding:16px 28px; display:flex; align-items:center; justify-content:space-between; }
+  .topbar strong { font-family:var(--font-display); }
+  .tabs { display:flex; gap:6px; padding:20px 28px 0; }
+  .tabs button { background:transparent; border:none; font-weight:700; font-size:14px; padding:10px 18px; border-radius:999px 999px 0 0; color:#8A8578; }
+  .tabs button.active { background:var(--card); color:#141414; }
+  .panel { background:var(--card); margin:0 28px 28px; padding:28px; border-radius:0 18px 18px 18px; min-height:400px; }
+  .row-between { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { text-align:left; padding:12px 10px; border-bottom:1px solid rgba(20,20,20,0.08); font-size:14px; }
+  th { color:#8A8578; font-size:12px; text-transform:uppercase; letter-spacing:0.06em; }
+  .badge { display:inline-flex; font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px; }
+  .badge.published { background:#E4F6E9; color:#1F8A4C; }
+  .badge.draft { background:#F1EDE2; color:#8A8578; }
+  .actions-cell { display:flex; gap:8px; }
+  .actions-cell button { background:none; border:none; font-weight:700; font-size:13px; color:#5A564C; padding:4px 8px; }
+  .actions-cell button:hover { color:#141414; }
+  .actions-cell button.del:hover { color:#C0392B; }
+
+  /* editor overlay */
+  #editor-overlay { display:none; position:fixed; inset:0; background:rgba(20,20,20,0.5); z-index:100; align-items:flex-start; justify-content:center; padding:40px 20px; overflow:auto; }
+  #editor-box { background:var(--card); border-radius:22px; padding:32px; width:100%; max-width:680px; }
+  #editor-box h2 { font-family:var(--font-display); margin:0 0 20px; font-size:20px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .field-actions { display:flex; gap:10px; margin-top:24px; justify-content:flex-end; }
+  textarea#f-content { min-height:220px; resize:vertical; font-family: ui-monospace, monospace; font-size:13px; }
+  .hint { font-size:12px; color:#A39D8C; margin-top:5px; }
+</style>
+</head>
+<body>
+
+  <div id="login-screen">
+    <div class="login-box">
+      <h1>Backoffice blog</h1>
+      <p>Connexion administrateur.</p>
+      <div class="field">
+        <label>Email</label>
+        <input id="login-email" type="email" placeholder="admin@exemple.com" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn full" id="login-btn">Se connecter</button>
+      <div class="error" id="login-error"></div>
+    </div>
+  </div>
+
+  <div id="app">
+    <div class="topbar">
+      <strong>Backoffice blog</strong>
+      <button class="btn secondary" id="logout-btn" style="color:var(--bg);border-color:rgba(243,239,230,0.3);">Déconnexion</button>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="posts">Articles</button>
+      <button class="tab-btn" data-tab="categories">Catégories</button>
+    </div>
+
+    <div class="panel" id="panel-posts">
+      <div class="row-between">
+        <div style="font-weight:700;">Articles</div>
+        <button class="btn" id="new-post-btn">+ Nouvel article</button>
+      </div>
+      <table>
+        <thead><tr><th>Titre</th><th>Catégorie</th><th>Statut</th><th>Publié le</th><th></th></tr></thead>
+        <tbody id="posts-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="panel" id="panel-categories" style="display:none;">
+      <div class="row-between">
+        <div style="font-weight:700;">Catégories</div>
+      </div>
+      <div class="grid2" style="margin-bottom:24px;max-width:480px;">
+        <input id="new-cat-name" placeholder="Nom de la catégorie">
+        <button class="btn" id="new-cat-btn">+ Ajouter</button>
+      </div>
+      <table>
+        <thead><tr><th>Nom</th><th>Slug</th><th></th></tr></thead>
+        <tbody id="cats-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="editor-overlay">
+    <div id="editor-box">
+      <h2 id="editor-title">Nouvel article</h2>
+      <input type="hidden" id="f-id">
+      <input type="hidden" id="f-orig-status">
+      <input type="hidden" id="f-orig-published-at">
+      <div class="field">
+        <label>Titre</label>
+        <input id="f-title" placeholder="Titre de l'article">
+      </div>
+      <div class="field">
+        <label>Slug (URL)</label>
+        <input id="f-slug" placeholder="titre-de-larticle">
+        <div class="hint">Généré automatiquement, modifiable.</div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Catégorie</label>
+          <select id="f-category"></select>
+        </div>
+        <div class="field">
+          <label>Statut</label>
+          <select id="f-status">
+            <option value="draft">Brouillon</option>
+            <option value="published">Publié</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Image de couverture (URL, optionnel)</label>
+        <input id="f-cover" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label>Extrait (résumé court)</label>
+        <textarea id="f-excerpt" rows="2"></textarea>
+      </div>
+      <div class="field">
+        <label>Contenu (Markdown)</label>
+        <textarea id="f-content" placeholder="## Titre&#10;&#10;Texte de l'article en **markdown**..."></textarea>
+      </div>
+      <div class="error" id="editor-error"></div>
+      <div class="field-actions">
+        <button class="btn secondary" id="editor-cancel">Annuler</button>
+        <button class="btn" id="editor-save">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  import { supabase } from '../supabase-client.js';
+
+  const loginScreen = document.getElementById('login-screen');
+  const app = document.getElementById('app');
+  const loginError = document.getElementById('login-error');
+
+  let categories = [];
+
+  function slugify(s) {
+    return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  }
+
+  async function checkSession() {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      showApp();
+    } else {
+      loginScreen.style.display = 'flex';
+      app.style.display = 'none';
+    }
+  }
+
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    loginError.textContent = '';
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) { loginError.textContent = 'Identifiants incorrects.'; return; }
+    showApp();
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    checkSession();
+  });
+
+  async function showApp() {
+    loginScreen.style.display = 'none';
+    app.style.display = 'block';
+    await loadCategories();
+    await loadPosts();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-posts').style.display = btn.dataset.tab === 'posts' ? 'block' : 'none';
+      document.getElementById('panel-categories').style.display = btn.dataset.tab === 'categories' ? 'block' : 'none';
+    });
+  });
+
+  async function loadCategories() {
+    const { data } = await supabase.from('blog_categories').select('id,name,slug').order('name');
+    categories = data || [];
+    const sel = document.getElementById('f-category');
+    sel.innerHTML = '<option value="">Sans catégorie</option>' + categories.map((c) => `<option value="${c.id}">${c.name}</option>`).join('');
+    const tbody = document.getElementById('cats-tbody');
+    tbody.innerHTML = '';
+    categories.forEach((c) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${c.name}</td><td>${c.slug}</td><td class="actions-cell"><button class="del" data-id="${c.id}">Supprimer</button></td>`;
+      tr.querySelector('.del').addEventListener('click', async () => {
+        if (!confirm(`Supprimer la catégorie "${c.name}" ?`)) return;
+        await supabase.from('blog_categories').delete().eq('id', c.id);
+        await loadCategories();
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('new-cat-btn').addEventListener('click', async () => {
+    const input = document.getElementById('new-cat-name');
+    const name = input.value.trim();
+    if (!name) return;
+    const { error } = await supabase.from('blog_categories').insert({ name, slug: slugify(name) });
+    if (error) { alert('Erreur: ' + error.message); return; }
+    input.value = '';
+    await loadCategories();
+  });
+
+  async function loadPosts() {
+    const { data } = await supabase
+      .from('blog_posts')
+      .select('id,title,slug,status,published_at,category_id,blog_categories(name)')
+      .order('created_at', { ascending: false });
+    const tbody = document.getElementById('posts-tbody');
+    tbody.innerHTML = '';
+    (data || []).forEach((p) => {
+      const tr = document.createElement('tr');
+      const date = p.published_at ? new Date(p.published_at).toLocaleDateString('fr-FR') : '—';
+      tr.innerHTML = `
+        <td>${p.title}</td>
+        <td>${p.blog_categories ? p.blog_categories.name : '—'}</td>
+        <td><span class="badge ${p.status}">${p.status === 'published' ? 'Publié' : 'Brouillon'}</span></td>
+        <td>${date}</td>
+        <td class="actions-cell">
+          <button class="edit">Modifier</button>
+          <button class="del">Supprimer</button>
+        </td>`;
+      tr.querySelector('.edit').addEventListener('click', () => openEditor(p.id));
+      tr.querySelector('.del').addEventListener('click', async () => {
+        if (!confirm(`Supprimer l'article "${p.title}" ?`)) return;
+        await supabase.from('blog_posts').delete().eq('id', p.id);
+        await loadPosts();
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  const overlay = document.getElementById('editor-overlay');
+  const fId = document.getElementById('f-id');
+  const fTitle = document.getElementById('f-title');
+  const fSlug = document.getElementById('f-slug');
+  const fCategory = document.getElementById('f-category');
+  const fStatus = document.getElementById('f-status');
+  const fCover = document.getElementById('f-cover');
+  const fExcerpt = document.getElementById('f-excerpt');
+  const fContent = document.getElementById('f-content');
+  const editorError = document.getElementById('editor-error');
+  let slugTouched = false;
+
+  fTitle.addEventListener('input', () => {
+    if (!slugTouched) fSlug.value = slugify(fTitle.value);
+  });
+  fSlug.addEventListener('input', () => { slugTouched = true; });
+
+  document.getElementById('new-post-btn').addEventListener('click', () => openEditor(null));
+  document.getElementById('editor-cancel').addEventListener('click', () => { overlay.style.display = 'none'; });
+
+  async function openEditor(id) {
+    editorError.textContent = '';
+    slugTouched = false;
+    fId.value = id || '';
+    if (id) {
+      const { data: p } = await supabase.from('blog_posts').select('*').eq('id', id).single();
+      document.getElementById('editor-title').textContent = 'Modifier l’article';
+      fTitle.value = p.title;
+      fSlug.value = p.slug;
+      fCategory.value = p.category_id || '';
+      fStatus.value = p.status;
+      fCover.value = p.cover_image || '';
+      fExcerpt.value = p.excerpt || '';
+      fContent.value = p.content || '';
+      document.getElementById('f-orig-status').value = p.status;
+      document.getElementById('f-orig-published-at').value = p.published_at || '';
+      slugTouched = true;
+    } else {
+      document.getElementById('editor-title').textContent = 'Nouvel article';
+      fTitle.value = ''; fSlug.value = ''; fCategory.value = ''; fStatus.value = 'draft';
+      fCover.value = ''; fExcerpt.value = ''; fContent.value = '';
+      document.getElementById('f-orig-status').value = '';
+      document.getElementById('f-orig-published-at').value = '';
+    }
+    overlay.style.display = 'flex';
+  }
+
+  document.getElementById('editor-save').addEventListener('click', async () => {
+    editorError.textContent = '';
+    const title = fTitle.value.trim();
+    const slug = fSlug.value.trim();
+    const content = fContent.value.trim();
+    if (!title || !slug || !content) {
+      editorError.textContent = 'Titre, slug et contenu sont obligatoires.';
+      return;
+    }
+    const status = fStatus.value;
+    const origStatus = document.getElementById('f-orig-status').value;
+    const origPublishedAt = document.getElementById('f-orig-published-at').value;
+    let publishedAt = null;
+    if (status === 'published') {
+      publishedAt = origStatus === 'published' && origPublishedAt ? origPublishedAt : new Date().toISOString();
+    }
+    const payload = {
+      title,
+      slug,
+      category_id: fCategory.value || null,
+      status,
+      cover_image: fCover.value.trim() || null,
+      excerpt: fExcerpt.value.trim() || null,
+      content,
+      published_at: publishedAt,
+      updated_at: new Date().toISOString()
+    };
+    const id = fId.value;
+    const { error } = id
+      ? await supabase.from('blog_posts').update(payload).eq('id', id)
+      : await supabase.from('blog_posts').insert(payload);
+    if (error) { editorError.textContent = 'Erreur: ' + error.message; return; }
+    overlay.style.display = 'none';
+    await loadPosts();
+  });
+
+  checkSession();
+</script>
+</body>
+</html>
