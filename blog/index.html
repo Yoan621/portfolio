@@ -42,14 +42,14 @@
 <body>
   <header>
     <nav>
-      <a class="logo" href="../index.html">
+      <a class="logo" href="/index.html">
         <span class="logo-mark">Y</span>
         <span class="logo-name">Yoan Duclaux<span style="color:var(--accent);">.</span></span>
       </a>
       <div style="display:flex;align-items:center;gap:24px;font-weight:600;font-size:15px;">
-        <a href="../index.html">Accueil</a>
-        <a href="../index.html#projets">Projets</a>
-        <a href="./index.html">Blog</a>
+        <a href="/index.html">Accueil</a>
+        <a href="/index.html#projets">Projets</a>
+        <a href="/blog/index.html">Blog</a>
       </div>
     </nav>
   </header>
@@ -67,7 +67,7 @@
   <footer>© 2026 Yoan Duclaux. <a href="mailto:Yoan.tavel@gmail.com">Yoan.tavel@gmail.com</a></footer>
 
 <script type="module">
-  import { supabase } from './supabase-client.js';
+  import { supabase } from '/blog/supabase-client.js';
 
   const params = new URLSearchParams(location.search);
   const activeCat = params.get('cat') || '';
@@ -84,13 +84,13 @@
   const filtersEl = document.getElementById('filters');
   const all = document.createElement('a');
   all.textContent = 'Tous';
-  all.href = './index.html';
+  all.href = '/blog/index.html';
   if (!activeCat) all.className = 'active';
   filtersEl.appendChild(all);
   (categories || []).forEach((c) => {
     const a = document.createElement('a');
     a.textContent = c.name;
-    a.href = './index.html?cat=' + encodeURIComponent(c.slug);
+    a.href = '/blog/index.html?cat=' + encodeURIComponent(c.slug);
     if (activeCat === c.slug) a.className = 'active';
     filtersEl.appendChild(a);
   });
@@ -104,7 +104,7 @@
   } else {
     filtered.forEach((p) => {
       const card = document.createElement('a');
-      card.href = './post.html?slug=' + encodeURIComponent(p.slug);
+      card.href = '/blog/post.html?slug=' + encodeURIComponent(p.slug);
       card.className = 'post-card';
       const cover = document.createElement('div');
       cover.className = 'post-cover';

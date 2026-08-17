@@ -39,19 +39,19 @@
 <body>
   <header>
     <nav>
-      <a class="logo" href="../index.html">
+      <a class="logo" href="/index.html">
         <span class="logo-mark">Y</span>
         <span class="logo-name">Yoan Duclaux<span style="color:var(--accent);">.</span></span>
       </a>
       <div style="display:flex;align-items:center;gap:24px;font-weight:600;font-size:15px;">
-        <a href="../index.html" style="text-decoration:none;">Accueil</a>
-        <a href="./index.html" style="text-decoration:none;">Blog</a>
+        <a href="/index.html" style="text-decoration:none;">Accueil</a>
+        <a href="/blog/index.html" style="text-decoration:none;">Blog</a>
       </div>
     </nav>
   </header>
 
   <main id="main">
-    <a class="back" href="./index.html">← Tous les articles</a>
+    <a class="back" href="/blog/index.html">← Tous les articles</a>
     <div id="post-root">Chargement…</div>
   </main>
 
@@ -59,7 +59,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script type="module">
-  import { supabase } from './supabase-client.js';
+  import { supabase } from '/blog/supabase-client.js';
 
   const slug = new URLSearchParams(location.search).get('slug');
   const root = document.getElementById('post-root');
