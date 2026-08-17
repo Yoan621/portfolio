@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://meilleuralternantseo.com/sitemap.xml
+
+#
+# Bonjour,
+#
+# Si vous lisez ce fichier, vous n'êtes probablement pas un robot.
+#
+# Recruteur, chargé de recrutement ou responsable SEO/Ads à la recherche
+# d'un alternant sérieux, curieux et déjà opérationnel sur le search
+# (SEO technique, contenu, netlinking) et le paid media (Google Ads,
+# Meta Ads) ?
+#
+# Vous venez de trouver le bon profil.
+#
+# Contactez-moi : yoan.tavel@gmail.com
+#
